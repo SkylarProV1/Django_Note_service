@@ -4,6 +4,10 @@
 
 <h1>{{ note.title }}</h1>
 
+{% for tag in note.tags.all %}
+<a href="#" class="badge badge-info" >{{ tag }}</a>
+{% endfor %}
+
 <p>{{ note.body }}</p>
 
 {% endblock %}

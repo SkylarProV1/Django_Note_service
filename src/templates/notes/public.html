@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load bootstrap4 %}
+{% block extra_head %}
+{% load wysiwyg %}
+{% wysiwyg_setup %}
+{% endblock %}
+
+
+{% block content %}
+
+<form action="{% url 'notes:sharedsearch' %}" method="get"  class="form-inline md-form mr-auto mb-4">
+  <input class="form-control mr-sm-2" name="q" type="text" placeholder="Search..." aria-label="Search">
+  <input type="submit" value="Search" class="btn btn-outline-success btn-rounded waves-effect">
+</form>
+
+{% if latest_note_list %}
+    <ul>
+    {% for note in latest_note_list %}
+	<p>
+   		<h4>{{ note.title }}</h4>
+   		{{ note.body | safe }}
+   	<label>{{ note.owner}}</label>
+   		</br>
+      {% for tag in note.tags.all %}
+      <a href="{%url 'notes:sharedtag' tag.slug%}" class="badge badge-dark"><h7>#{{tag}}</h7></a>
+      {% endfor %}
+	</p>
+	<hr/>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+
+{% if is_paginated %}
+<div class="pagination">
+   <span class="step-links">
+       {% if page_obj.has_previous %}
+           <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+       {% endif %}
+
+       <span class="current">
+           Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+       </span>
+
+       {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}">next</a>
+       {% endif %}
+  </span>
+</div>
+{% endif %}
+
+{% endblock %}

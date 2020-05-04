@@ -1,19 +1,33 @@
 {% extends "base.html" %}
-
+{% load bootstrap4 %}
 {% block content %}
+
+
+<form action="{% url 'notes:searched' %}" method="get"  class="form-inline md-form mr-auto mb-4">
+  <input class="form-control mr-sm-2" name="q" type="text" placeholder="Search..." aria-label="Search">
+  <input type="submit" value="Search" class="btn btn-outline-success btn-rounded waves-effect">
+</form>
+
 {% if latest_note_list %}
     <ul>
     {% for note in latest_note_list %}
 	<p>
-   		<a href="{% url 'notes:update' note.id %}">{{ note.title }}</a><br/>
+   		<a href="{% url 'notes:update' note.id %}"><h4>{{ note.title }}</h4></a>
    		{{ note.body | safe }}
+      {% for tag in note.tags.all %}
+      <a href="{%url 'notes:tagged' tag.slug%}" class="badge badge-dark"><h7>#{{tag}}</h7></a>
+      {% endfor %}
 	</p>
-	<hr />
+	<hr/>
     {% endfor %}
-    </ul>
+  </ul>
+
+
 {% else %}
     <p>No notes are available.</p>
 {% endif %}
+
+
 
 {% if is_paginated %}
 <div class="pagination">

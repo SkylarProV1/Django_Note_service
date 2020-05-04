@@ -10,6 +10,7 @@ User = get_user_model()
 
 class NoteViewTest(TestCase):
 
+
     def setUp(self):
         self.test_user1 = User.objects.create_user(
             email="test_user1@example.com",
@@ -24,12 +25,18 @@ class NoteViewTest(TestCase):
             self.notes.append(Note.objects.create(
                 title=f"Note title {i}",
                 body="Note body",
-                owner=self.test_user1))
+                owner=self.test_user1,
+                tags='123',
+                public=False,
+                ))
 
         self.test_user2_note = Note.objects.create(
             title="Note title",
             body="Note body",
-            owner=self.test_user2)
+            owner=self.test_user2,
+            tags='1234',
+            public=False,
+            )
 
         self.client = APIClient()
 

@@ -13,6 +13,7 @@ class RegisterViewTests(TestCase):
 
 	def setUp(self):
 		url = reverse('accounts:register')
+		#print('Okk',self.response)
 		self.response = self.client.get(url)
 
 	def test_signup_status_code(self):

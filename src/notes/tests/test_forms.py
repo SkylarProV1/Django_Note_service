@@ -7,9 +7,9 @@ from notes.forms import NoteForm
 User = get_user_model()
 
 class NoteFormTests(TestCase):
-
+	#ERROR
 	def test_form_save(self):
-		data = {'title': 'Note Title', 'body': 'Note body'}
+		data = {'title': 'Note Title', 'body': 'Note body','tags':'ok','public':True}
 		form = NoteForm(data=data)
 		self.assertTrue(form.is_valid())
 
