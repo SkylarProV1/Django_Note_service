@@ -1,38 +1,15 @@
 from rest_framework import serializers
-
 from taggit.managers import TaggableManager
-
 from notes.models import Note
-
 from accounts.models import User
-
 from django.contrib.auth import get_user_model
-
-
-
-
-
-
-
-
-
-
-
-#from .forms import SignupForm
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 from accounts.tokens import account_activation_token
-#from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
 
-from accounts.models import User
-
-#from django.utils.encoding import force_text
-
-
-#from django.urls import reverse_lazy
 
 
 class TagSerializerField(serializers.ListField):
