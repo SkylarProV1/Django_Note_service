@@ -17,10 +17,10 @@ from django.core.mail import EmailMessage
 
 from .models import User
 
-from django.utils.encoding import force_text
+#from django.utils.encoding import force_text
 
 
-from django.urls import reverse_lazy
+#from django.urls import reverse_lazy
 
 
 from django.contrib import messages
@@ -58,14 +58,8 @@ class RegisterView(FormView):
 			email = EmailMessage(
 	                        mail_subject, message, to=[to_email]
 				)
-			print(message)
-			print(email)
 			email.send()
 			messages.success(self.request, ('Please Confirm your email to complete registration.'))
-
-
-			#return redirect('/')
-			#return redirect('login')
 			return HttpResponse('Please confirm your email address to complete the registration')# подкорректировать
 		return redirect('/')
 		#return super(RegisterView, self).form_valid(form)

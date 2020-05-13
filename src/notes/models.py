@@ -8,6 +8,7 @@ from taggit.managers import TaggableManager
 User = get_user_model()
 
 class Note(models.Model):
+    
     title = models.CharField(max_length=200)
     body = models.TextField()
     pub_date = models.DateTimeField('date published', auto_now_add=True)
