@@ -9,8 +9,6 @@ from notes.models import Note
 User = get_user_model()
 
 class NoteViewTest(TestCase):
-
-
     def setUp(self):
         self.test_user1 = User.objects.create_user(
             email="test_user1@example.com",
@@ -26,15 +24,14 @@ class NoteViewTest(TestCase):
                 title=f"Note title {i}",
                 body="Note body",
                 owner=self.test_user1,
-                tags='123',
+                tags=['123'],
                 public=False,
                 ))
-
         self.test_user2_note = Note.objects.create(
             title="Note title",
             body="Note body",
             owner=self.test_user2,
-            tags='1234',
+            tags=['1234'],
             public=False,
             )
 
@@ -47,6 +44,7 @@ class NoteViewTest(TestCase):
         }, format="json")
         token = response.json()["token"]
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
 
     def test_api_can_get_note_list(self):
         self._authenticate()
@@ -64,10 +62,11 @@ class NoteViewTest(TestCase):
 
     def test_api_can_create_note(self):
         self._authenticate()
-        response = self.client.post(reverse('api:note-list'),
+        response = self.client.post(reverse('api:create'),
             {
                 "title": "New note title",
-                "body": "New note body"
+                "body": "New note body",
+                "tags": ['123'],
             }, format="json")
         note = Note.objects.filter(owner=self.test_user1).last()
         self.assertEquals(Note.objects.filter(owner=self.test_user1).count(),
@@ -78,10 +77,11 @@ class NoteViewTest(TestCase):
     def test_api_can_update_note(self):
         self._authenticate()
         pk = self.notes[0].id
-        response = self.client.put(reverse('api:note-detail', kwargs={"pk": pk}),
+        response = self.client.put(reverse('api:reload', kwargs={"pk": pk}),
             {
                 "title": "Note title updated",
-                "body": "Note body updated"
+                "body": "Note body updated",
+                "tags": ["214"],
             }, format="json")
         note = Note.objects.get(pk=pk)
         self.assertEquals(note.title, "Note title updated")
@@ -90,7 +90,7 @@ class NoteViewTest(TestCase):
     def test_api_can_delete_note(self):
         self._authenticate()
         pk = self.notes[0].id
-        response = self.client.delete(reverse('api:note-detail', kwargs={"pk": pk}))
+        response = self.client.delete(reverse('api:del', kwargs={"pk": pk}))
         self.assertEquals(Note.objects.filter(owner=self.test_user1).count(),
             self.n-1)
 
@@ -103,10 +103,11 @@ class NoteViewTest(TestCase):
     def test_api_only_owner_can_update_note(self):
         self._authenticate()
         pk = self.test_user2_note.id
-        response = self.client.put(reverse('api:note-detail', kwargs={"pk": pk}),
+        response = self.client.put(reverse('api:reload', kwargs={"pk": pk}),
             {
                 "title": "Note title updated",
-                "body": "Note body updated"
+                "body": "Note body updated",
+                "tags": ["214"],
             }, format="json")
         note = Note.objects.get(pk=pk)
         self.assertEquals(response.json()["detail"], "Not found.")
@@ -116,6 +117,6 @@ class NoteViewTest(TestCase):
     def test_api_only_owner_can_delete_note(self):
         self._authenticate()
         pk = self.test_user2_note.id
-        response = self.client.delete(reverse('api:note-detail', kwargs={"pk": pk}))
+        response = self.client.delete(reverse('api:del', kwargs={"pk": pk}))
         self.assertEquals(response.json()["detail"], "Not found.")
         self.assertEquals(Note.objects.filter(owner=self.test_user2).count(), 1)

@@ -57,10 +57,11 @@ class NoteViewTest(TestCase):
 
     def test_api_can_create_note(self):
         self._authenticate()
-        response = self.client.post(reverse('api:note-list'),
+        response = self.client.post(reverse('api:create'),
             {
                 "title": "New note title",
-                "body": "New note body"
+                "body": "New note body",
+                "tags": ['123'],
             }, format="json")
         note = Note.objects.filter(owner=self.test_user1).last()
         self.assertEquals(Note.objects.filter(owner=self.test_user1).count(),
@@ -71,10 +72,11 @@ class NoteViewTest(TestCase):
     def test_api_can_update_note(self):
         self._authenticate()
         pk = self.notes[0].id
-        response = self.client.put(reverse('api:note-detail', kwargs={"pk": pk}),
+        response = self.client.put(reverse('api:reload', kwargs={"pk": pk}),
             {
                 "title": "Note title updated",
-                "body": "Note body updated"
+                "body": "Note body updated",
+                "tags": ["123"],
             }, format="json")
         note = Note.objects.get(pk=pk)
         self.assertEquals(note.title, "Note title updated")

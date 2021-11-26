@@ -25,9 +25,10 @@ from django.shortcuts import render, redirect
 
 from django.contrib.auth import get_user_model
 
+
 class NoteViewSet(viewsets.ModelViewSet):
 
-	serializer_class = NoteSerializer 
+	serializer_class = NoteSerializer
 	queryset = Note.objects.all()
 	permission_classes = [permissions.IsAuthenticated]
 	renderer_classes = [JSONRenderer]
@@ -38,6 +39,12 @@ class NoteViewSet(viewsets.ModelViewSet):
 
 	def perform_create(self, serializer):
 		serializer.save(owner=self.request.user)
+
+	def perform_destroy(self, instance):
+		instance.delete()
+
+	def perform_update(self, serializer):
+		serializer.save()
 
 
 class TageViewSet(viewsets.ModelViewSet):
@@ -52,6 +59,7 @@ class TageViewSet(viewsets.ModelViewSet):
 
 	def perform_create(self, serializer):
 		serializer.save(owner=self.request.user)
+
 
 
 class SearchNotesSet(viewsets.ModelViewSet):
@@ -76,7 +84,6 @@ class SearchPublicNoteSet(viewsets.ModelViewSet):
 	renderer_classes = [JSONRenderer]
 
 	def filter_queryset(self, queryset):
-
 		queryset=Note.objects.filter(public__icontains=True)
 		query = self.request.GET.get('q')
 		return queryset.filter(title__icontains=query)
@@ -108,16 +115,6 @@ class Public(viewsets.ModelViewSet):
 
 	def perform_create(self, serializer):
 		serializer.save(owner=self.request.user)
-
-
-class Update(viewsets.ModelViewSet):
-	serializer_class = PublicSerializer 
-	queryset = Note.objects.all()
-	permission_classes = [permissions.IsAuthenticated]
-	renderer_classes = [JSONRenderer]
-
-	def perform_update(self, serializer):
-		serializer.save()
 
 
 class Register(viewsets.ModelViewSet):

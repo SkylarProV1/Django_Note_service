@@ -32,7 +32,6 @@ class RegisterView(FormView):
 	form_class = UserCreationForm
 	success_url = '/'
 
-
 	def get(self, request, *args, **kwargs):
 		form = self.form_class()
 		return render(request, self.template_name, {'form': form})
@@ -43,7 +42,7 @@ class RegisterView(FormView):
 		form = self.form_class(request.POST)
 		if form.is_valid():
 			user = form.save(commit=False)
-			user.is_active = False
+			user.is_active = True#False
 			user.save()
 			current_site = get_current_site(self.request)
 			mail_subject = 'Activate your blog account.'
@@ -75,7 +74,7 @@ class Activate(FormView):
 			uid = urlsafe_base64_decode(uidb64).decode('utf-8')
 			user = User.objects.get(pk=uid)
 		except Exception as e :
-			pritnt("OOOOOOOO",e)
+			print("OOOOOOOO",e)
 			user = None
 
 		if user is not None and account_activation_token.check_token(user, token):

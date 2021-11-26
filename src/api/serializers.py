@@ -29,6 +29,10 @@ class TagSerializer(serializers.ModelSerializer):
 		instance.tags.set(*tags)
 		return instance
 
+	def update(self, instance, validated_data):
+		instance.tags = validated_data.get('tags', instance.tags)
+		instance.save()
+		return instance
 
 class NoteSerializer(serializers.ModelSerializer):
 
@@ -36,15 +40,15 @@ class NoteSerializer(serializers.ModelSerializer):
 
 	def create(self, validated_data):
 		tags = validated_data.pop('tags')
-		instance = super(TagSerializer, self).create(validated_data)
+		instance = super().create(validated_data)
 		instance.tags.set(*tags)
 		return instance
 
 	def update(self, instance, validated_data):
-		instance.title=validated_data.get('title', instance.title)
-		instance.body=validated_data.get('body', instance.body)
-		instance.tags=validated_data.get('tags', instance.tags)
-		instance.public=validated_data.get('public', instance.public)
+		instance.title = validated_data.get('title', instance.title)
+		instance.body = validated_data.get('body', instance.body)
+		instance.tags.set(*validated_data.get('tags', instance.tags))
+		instance.public = validated_data.get('public', instance.public)
 		instance.save()
 		return instance
 
@@ -66,7 +70,7 @@ class PublicSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Note
-		fields = ('id', 'title', 'body','public')
+		fields = ('id', 'title', 'body', 'public')
 
 
 User = get_user_model()
@@ -81,7 +85,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             email=validated_data['email']
         )
 		user.set_password(validated_data['password'])
-		user.is_active=False
+		user.is_active = False
 
 		#current_site = get_current_site(self)
 		mail_subject = 'Activate your blog account.'
@@ -101,11 +105,6 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 		return user
 
-
 	class Meta:
 		model = User
 		fields = ('id','email','password')
-
-
-
-
